@@ -50,6 +50,8 @@ namespace MyAuthServer.Services
 	/// <param name="databaseServiceFactory"></param>
 	public class SessionTokenService(IDatabaseServiceFactory databaseServiceFactory) : ISessionTokenService
 	{
+		private readonly IDatabaseServiceFactory _databaseFactory = databaseServiceFactory;
+
 		private static readonly string createSessionSQL = SQLQueryBuilder.Begin(SQLKeywords.INSERT).IntoValues("sessionTokens", "token", "userId", "deviceId", "expiry").BuildAndClear();
 
 		public async Task CreateSession(int userId, string token, string deviceId)
@@ -81,8 +83,6 @@ namespace MyAuthServer.Services
 		{
 			await _databaseFactory.GetDatabaseService("sessionTokenDatabase").ExecuteNonQueryAsync(PerformPeriodicCleanupSQL, [("@expiry", DateTime.Now)]);
 		}
-
-		private readonly IDatabaseServiceFactory _databaseFactory = databaseServiceFactory;
 
 		private static readonly string removeSessionSQL = SQLQueryBuilder.Begin(SQLKeywords.DELETE).From("sessionTokens").Where("@token", SQLKeywords.EQUALS).And("@deviceId", SQLKeywords.EQUALS).BuildAndClear();
 
