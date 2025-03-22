@@ -11,15 +11,14 @@ builder.WebHost.UseUrls("https://localhost:5266");
 
 // Add services to the container.
 builder.Services.AddScoped<SessionCleanupService>();
-
 builder.Services.AddScoped<IDatabaseServiceFactory, DatabaseServiceFactory>();
 builder.Services.AddScoped<ISessionTokenService, SessionTokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Require HTTPS.
 builder.Services.AddControllersWithViews(options => options.Filters.Add(new Microsoft.AspNetCore.Mvc.RequireHttpsAttribute()));
 
 // Serilog initialization.

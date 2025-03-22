@@ -1,5 +1,8 @@
 ﻿namespace MyAuthServer.SQL
 {
+	/// <summary>
+	/// Contains sql keywords for operations and comparisons.
+	/// </summary>
 	public static class SQLKeywords
 	{
 		public const string SELECT = "SELECT *";

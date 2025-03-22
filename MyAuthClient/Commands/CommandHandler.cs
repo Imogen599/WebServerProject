@@ -1,4 +1,6 @@
 ﻿using System.Collections.Concurrent;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace MyAuthClient.Commands
 {
@@ -35,8 +37,30 @@ namespace MyAuthClient.Commands
 
         internal static void Initialize()
         {
-            commands = [];
-            var commandTypesAsICommand = Helper.LoadContentFromAssembly<ICommand>(typeof(Program).Assembly);
+			static List<TContent> loadContentFromAssembly<TContent>(Assembly assembly) where TContent : class
+			{
+				var loadableTypes = assembly.GetTypes()
+					.Where(t => !t.IsAbstract && !t.ContainsGenericParameters)
+					.Where(t => t.IsAssignableTo(typeof(TContent)))
+					.Where(t =>
+					{
+						// Has default constructor check.
+						bool derivedHasConstructor = t.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, Type.EmptyTypes) != null;
+						bool baseHasHasConstructor = t.BaseType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, Type.EmptyTypes) != null;
+						return derivedHasConstructor || baseHasHasConstructor;
+					})
+					.OrderBy(type => type.FullName, StringComparer.InvariantCulture);
+
+				List<TContent> result = [];
+
+				foreach (var type in loadableTypes)
+					result.Add(RuntimeHelpers.GetUninitializedObject(type) as TContent);
+
+				return result;
+			}
+
+			commands = [];
+            var commandTypesAsICommand = loadContentFromAssembly<ICommand>(typeof(Program).Assembly);
 
             commandTypesAsICommand.ForEach(command => commands[command.CommandName] = command);
 

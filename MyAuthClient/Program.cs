@@ -12,8 +12,6 @@ namespace MyAuthClient
 
 		static async Task Main()
 		{
-			using HttpClient client = new();
-
 			CommandHandler.Initialize();
 
 			while (true)
@@ -25,12 +23,11 @@ namespace MyAuthClient
 					userInput = Console.ReadLine();
 				}
 				while (userInput == string.Empty);
+
 				await CommandHandler.HandleCommandAsync(userInput);
 				if (ShouldExit)
 					break;
 			}
-
-			return;
 		}
 	}
 }

@@ -3,6 +3,9 @@ using System.Security.Cryptography;
 
 namespace MyAuthServer.SQL
 {
+	/// <summary>
+	/// Creates the sql databases, and handles the direct connection to them.
+	/// </summary>
 	public static class SQLDatabaseManager
 	{
 		internal static async void PrepareDatabases()
@@ -36,20 +39,6 @@ namespace MyAuthServer.SQL
 			var connection = new SqliteConnection($"Data Source=Databases/{databaseName}.db");
 			await connection.OpenAsync();
 			return connection;
-		}
-
-		internal static byte[] GenerateSalt()
-		{
-			byte[] salt = new byte[32];
-			using var rng = RandomNumberGenerator.Create();
-			rng.GetBytes(salt);
-			return salt;
-		}
-
-		internal static byte[] HashPassword(string password, byte[] salt, int iterations = 10000)
-		{
-			using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA512);
-			return pbkdf2.GetBytes(32);
 		}
 	}
 }

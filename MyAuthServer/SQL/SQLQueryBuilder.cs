@@ -1,5 +1,8 @@
 ﻿namespace MyAuthServer.SQL
 {
+	/// <summary>
+	/// A Sqlite query builder that creates sql commands.
+	/// </summary>
 	public sealed class SQLQueryBuilder
 	{
 		private SQLQueryBuilder() { }
@@ -8,10 +11,15 @@
 
 		private string sql;
 
-		public static SQLQueryBuilder Begin(string mainCommand, string table = null)
+		/// <summary>
+		/// Begins the sql query.
+		/// </summary>
+		/// <param name="startCommand">The starting command.</param>
+		/// <param name="table">The table to perform the command on.</param>
+		public static SQLQueryBuilder Begin(string startCommand, string table = null)
 		{
 			instance ??= new();
-			instance.sql = $"{mainCommand}{(table != null ? $" {table}" : string.Empty)}";
+			instance.sql = $"{startCommand}{(table != null ? $" {table}" : string.Empty)}";
 			return instance;
 		}
 
@@ -60,6 +68,10 @@
 			return this;
 		}
 
+		/// <summary>
+		/// Finishes the sql command, and returns it as a string.
+		/// </summary>
+		/// <returns></returns>
 		public string BuildAndClear() => sql + ";";
 
 		public override string ToString() => BuildAndClear();

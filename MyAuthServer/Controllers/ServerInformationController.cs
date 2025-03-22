@@ -16,7 +16,7 @@ namespace MyAuthServer.Controllers
 		private readonly ISessionTokenService _sessionTokenService = sessionTokenService;
 
 		[HttpPost("getServerInfo")]
-		public async Task<IActionResult> GetDateTime([FromBody] BasicRequest request)
+		public async Task<IActionResult> GetServerInfo([FromBody] BasicRequest request)
 		{
 			if (!await _sessionTokenService.ValidateSession(request.SessionToken, request.DeviceId))
 				return Unauthorized(new { message = "You must be logged in to perform this action." });
